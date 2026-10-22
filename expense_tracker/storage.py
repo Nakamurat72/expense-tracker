@@ -1,5 +1,10 @@
 import sqlite3
+
+from unicodedata import category
+
 from expense_tracker.models import Expense
+from datetime import date
+from decimal import Decimal
 
 DB_PATH = "expenses.db"
 
@@ -24,3 +29,20 @@ def add_expense(expense: Expense) -> int:
             (str(expense.amount), expense.category, expense.description, expense.spent_at.isoformat()),
         )
         return cursor.lastrowid
+
+def list_expenses() -> list[Expense]:
+    with get_connection() as conn:
+        rows = conn.execute(
+            "SELECT id, amount, category, description, spent_at FROM expenses ORDER BY spent_at"
+        ).fetchall()
+    return [
+        Expense(
+            amount=Decimal(row[1]),
+            category=row[2],
+            description=row[3],
+            spent_at=date.fromisoformat(row[4]),
+            id=row[0],
+        )
+        for row in rows
+    ]
+

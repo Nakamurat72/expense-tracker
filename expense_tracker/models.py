@@ -10,6 +10,7 @@ class Expense:
     category: str
     description: str
     spent_at: date
+    id: int  | None = None
 
     def __post_init__(self) -> None:
         if self.amount <= 0:
