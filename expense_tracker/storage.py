@@ -46,3 +46,7 @@ def list_expenses() -> list[Expense]:
         for row in rows
     ]
 
+def delete_expense(expense_id: int) -> bool:
+    with get_connection() as conn:
+        cursor = conn.execute("DELETE FROM expenses WHERE id = ?", (expense_id,))
+        return cursor.rowcount > 0
